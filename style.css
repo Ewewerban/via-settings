@@ -7,7 +7,7 @@ body {
 }
 
 .app-container {
-  max-width: 1050px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -19,11 +19,6 @@ header {
   padding-bottom: 15px;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 10px;
-}
-
 button {
   background-color: #007acc;
   color: white;
@@ -32,32 +27,19 @@ button {
   font-weight: bold;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-button:hover {
-  background-color: #005999;
-}
-
-.btn-danger {
-  background-color: #cc2d2d;
-}
-
-.btn-danger:hover {
-  background-color: #a31c1c;
-}
+button:hover { background-color: #005999; }
+.btn-danger { background-color: #cc2d2d; }
 
 .card {
   background-color: #1e1e1e;
   padding: 20px;
   margin-top: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 .control-group {
   margin-bottom: 15px;
@@ -72,73 +54,53 @@ select, input {
   color: #fff;
   border: 1px solid #444;
   border-radius: 4px;
-  font-size: 1rem;
 }
 
 pre {
   background-color: #000;
   padding: 10px;
   border-radius: 4px;
-  overflow-x: auto;
-  max-height: 150px;
   color: #00ff66;
   white-space: pre-wrap;
 }
 
-.hint {
-  color: #888;
-  font-size: 0.9em;
-  margin-bottom: 15px;
-}
-
-/* Wirtualna Klawiatura */
-.keyboard-grid {
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  gap: 6px;
-  background-color: #161616;
-  padding: 20px;
-  border-radius: 12px;
-  border: 2px solid #333;
-  overflow-x: auto;
-}
-
-.key {
-  background-color: #2d2d2d;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #fff;
-  height: 50px;
+/* WIZUALIZACJA MYSZKI */
+.mouse-wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 0.85em;
+  padding: 20px;
+}
+
+.mouse-body {
+  width: 180px;
+  height: 280px;
+  background-color: #181818;
+  border: 2px solid #00ff66;
+  border-radius: 70px 70px 50px 50px;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
+}
+
+.mouse-btn {
+  position: absolute;
+  background-color: #2a2a2a;
+  border: 1px solid #555;
+  color: #fff;
+  font-size: 0.75rem;
+  border-radius: 4px;
   cursor: pointer;
-  user-select: none;
-  box-shadow: 0 3px 0 #111;
-  transition: all 0.1s ease;
 }
 
-.key:hover {
-  background-color: #3a3a3a;
-  border-color: #007acc;
-}
-
-.key.active {
+.mouse-btn.active {
   background-color: #007acc;
   border-color: #00ff66;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
-  transform: translateY(2px);
+  box-shadow: 0 0 8px #00ff66;
 }
 
-/* Szerokości klawiszy w siatce CSS Grid */
-.w-1 { grid-column: span 1; }
-.w-125 { grid-column: span 2; }
-.w-15 { grid-column: span 2; }
-.w-175 { grid-column: span 2; }
-.w-2 { grid-column: span 3; }
-.w-225 { grid-column: span 3; }
-.w-275 { grid-column: span 4; }
-.w-625 { grid-column: span 9; }
+/* Pozycje przycisków myszki */
+.btn-left { top: 15px; left: 15px; width: 65px; height: 90px; border-radius: 40px 10px 10px 10px; }
+.btn-right { top: 15px; right: 15px; width: 65px; height: 90px; border-radius: 10px 40px 10px 10px; }
+.btn-wheel { top: 35px; left: 82px; width: 16px; height: 45px; border-radius: 8px; font-size: 0; }
+.btn-side-1 { top: 120px; left: -15px; width: 20px; height: 45px; }
+.btn-side-2 { top: 175px; left: -15px; width: 20px; height: 45px; }
+.btn-side-3 { top: 145px; left: 10px; width: 25px; height: 25px; border-radius: 50%; }
