@@ -68,4 +68,5 @@ pre {
   overflow-x: auto;
   max-height: 150px;
   color: #00ff66;
+  white-space: pre-wrap;
 }
