@@ -9,7 +9,7 @@ const previewCard = document.getElementById('preview-card');
 const logOutput = document.getElementById('log-output');
 
 const buttonSelect = document.getElementById('button-select');
-const visualButtons = document.querySelectorAll('.mouse-btn');
+const deviceContainer = document.getElementById('device-container');
 
 function log(message) {
   const timestamp = new Date().toLocaleTimeString();
@@ -24,7 +24,7 @@ connectBtn.addEventListener('click', async () => {
     const devices = await navigator.hid.requestDevice({ filters: [] });
 
     if (!devices || devices.length === 0) {
-      log('Nie wybrano żadnego urządzenia.');
+      log('Nie wybrano urządzenia.');
       return;
     }
 
@@ -34,17 +34,20 @@ connectBtn.addEventListener('click', async () => {
       await activeDevice.open();
     }
 
-    deviceNameEl.textContent = `Połączono: ${activeDevice.productName || 'Nieznane urządzenie'} (Vendor ID: ${activeDevice.vendorId})`;
-    
-    // Pokaż sekcje po połączeniu
+    deviceNameEl.textContent = `Połączono: ${activeDevice.productName || 'Urządzenie HID'} (VID: ${activeDevice.vendorId}, PID: ${activeDevice.productId})`;
+
+    // Rejestracja odbierania pakietów
+    activeDevice.addEventListener('inputreport', handleInputReport);
+
+    // Wysyłamy do mikrokontrolera komendę GET_LAYOUT (0x02)
+    const getLayoutCmd = new Uint8Array([0x02, 0x00]);
+    await activeDevice.sendReport(0x00, getLayoutCmd);
+    log('Wysłano komendę 0x02 (Żądanie struktury przycisków)...');
+
     mapperCard.classList.remove('hidden');
     previewCard.classList.remove('hidden');
     connectBtn.classList.add('hidden');
     disconnectBtn.classList.remove('hidden');
-
-    log(`Połączono pomyślnie z: ${activeDevice.productName}`);
-
-    activeDevice.addEventListener('inputreport', handleInputReport);
 
   } catch (error) {
     console.error('Błąd WebHID:', error);
@@ -52,43 +55,52 @@ connectBtn.addEventListener('click', async () => {
   }
 });
 
-// 2. Rozłączanie urządzenia
-disconnectBtn.addEventListener('click', async () => {
-  if (activeDevice) {
-    try {
-      await activeDevice.close();
-      log(`Rozłączono z: ${activeDevice.productName}`);
-    } catch (error) {
-      log(`Błąd podczas rozłączania: ${error.message}`);
-    }
+// 2. Obsługa przychodzącego raportu z mikrokontrolera
+function handleInputReport(event) {
+  const { data, reportId } = event;
+  const bytes = new Uint8Array(data.buffer);
+  log(`Odebrano pakiet [Report ID: ${reportId}]: ${Array.from(bytes).join(', ')}`);
+
+  // Komenda 0x02 = odpowiedź z informacją o przyciskach
+  // bytes[1] określa liczbę przycisków obecnych w układzie mikrokontrolera
+  if (bytes[0] === 0x02) {
+    const buttonCount = bytes[1];
+    log(`Urządzenie zwróciło informację o obecności ${buttonCount} przycisków.`);
+    buildUIFromDeviceData(buttonCount);
   }
+}
 
-  activeDevice = null;
-  deviceNameEl.textContent = 'Brak połączonego urządzenia';
-  
-  // Ukryj sekcje
-  mapperCard.classList.add('hidden');
-  previewCard.classList.add('hidden');
-  disconnectBtn.classList.add('hidden');
-  connectBtn.classList.remove('hidden');
-});
+// 3. Dynamiczne budowanie widoku z odebranych danych
+function buildUIFromDeviceData(count) {
+  deviceContainer.innerHTML = '';
+  buttonSelect.innerHTML = '';
 
-// 3. Synchronizacja wyboru przycisku (Wizualny schemat <-> Rozwijana lista)
-visualButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.getAttribute('data-button-id');
-    buttonSelect.value = id;
-    highlightVisualButton(id);
-  });
-});
+  for (let i = 1; i <= count; i++) {
+    // Przycisk graficzny
+    const btn = document.createElement('button');
+    btn.className = `dynamic-btn ${i === 1 ? 'active' : ''}`;
+    btn.dataset.buttonId = i;
+    btn.textContent = `P${i}`;
 
-buttonSelect.addEventListener('change', (e) => {
-  highlightVisualButton(e.target.value);
-});
+    btn.addEventListener('click', () => {
+      buttonSelect.value = i;
+      highlightButton(i);
+    });
 
-function highlightVisualButton(id) {
-  visualButtons.forEach(btn => {
-    if (btn.getAttribute('data-button-id') === id) {
+    deviceContainer.appendChild(btn);
+
+    // Opcja na liście rozwijanej
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = `Przycisk ${i}`;
+    buttonSelect.appendChild(option);
+  }
+}
+
+function highlightButton(id) {
+  const buttons = deviceContainer.querySelectorAll('.dynamic-btn');
+  buttons.forEach(btn => {
+    if (parseInt(btn.dataset.buttonId) === parseInt(id)) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
@@ -96,19 +108,24 @@ function highlightVisualButton(id) {
   });
 }
 
-// 4. Odbiór danych HID
-function handleInputReport(event) {
-  const { data, reportId } = event;
-  const valueArray = new Uint8Array(data.buffer);
-  log(`Odebrano pakiet [Report ID: ${reportId}]: ${Array.from(valueArray).join(', ')}`);
-}
-
-// 5. Zapisywanie konfiguracji
-saveBtn.addEventListener('click', async () => {
-  if (!activeDevice) {
-    log('Brak aktywnego urządzenia!');
-    return;
+// 4. Rozłączanie
+disconnectBtn.addEventListener('click', async () => {
+  if (activeDevice) {
+    await activeDevice.close();
+    log('Rozłączono z urządzeniem.');
   }
+
+  activeDevice = null;
+  deviceNameEl.textContent = 'Brak połączonego urządzenia';
+  mapperCard.classList.add('hidden');
+  previewCard.classList.add('hidden');
+  disconnectBtn.classList.add('hidden');
+  connectBtn.classList.remove('hidden');
+});
+
+// 5. Wysyłanie nowej konfiguracji (SET_KEYMAP = 0x01)
+saveBtn.addEventListener('click', async () => {
+  if (!activeDevice) return;
 
   const buttonId = parseInt(buttonSelect.value);
   const keyCode = parseInt(document.getElementById('action-select').value);
@@ -117,9 +134,8 @@ saveBtn.addEventListener('click', async () => {
 
   try {
     await activeDevice.sendReport(0x00, reportData);
-    log(`Wysyłanie bajtów: [${Array.from(reportData).join(', ')}] -> Sukces!`);
+    log(`Wysłano zapis: Przycisk ${buttonId} -> KeyCode ${keyCode}`);
   } catch (error) {
-    console.error('Błąd wysyłania pakietu:', error);
-    log(`Błąd zapisu: ${error.message}`);
+    log(`Błąd wysyłania: ${error.message}`);
   }
 });
