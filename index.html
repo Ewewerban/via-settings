@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VIA Web Configurator</title>
+  <title>Device Configurator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app-container">
     <header>
-      <h1>VIA Web Configurator</h1>
+      <h1>Device Configurator</h1>
       <div class="header-buttons">
         <button id="connect-btn">Połącz z urządzeniem</button>
         <button id="disconnect-btn" class="btn-danger hidden">Rozłącz</button>
@@ -22,59 +22,39 @@
         <p id="device-name">Brak połączonego urządzenia</p>
       </section>
 
-      <section id="keyboard-card" class="card hidden">
-        <h2>Wirtualna Klawiatura</h2>
-        <p class="hint">Kliknij klawisz na wizualizacji, a następnie wybierz dla niego nową funkcję poniżej:</p>
+      <section id="visual-card" class="card hidden">
+        <h2>Wizualizacja Urządzenia</h2>
+        <p class="hint">Kliknij przycisk myszki, aby skonfigurować jego działanie:</p>
         
-        <div id="keyboard-grid" class="keyboard-grid">
+        <div id="visual-container">
           </div>
       </section>
 
       <section id="mapper-card" class="card hidden">
-        <h2>Przypisz Funkcję Klawisza</h2>
+        <h2>Mapowanie Funkcji</h2>
         
         <div class="control-group">
-          <label>Wybrany klawisz do edycji:</label>
-          <input type="text" id="selected-key-display" value="Brak (kliknij klawisz powyżej)" readonly />
+          <label>Wybrany element:</label>
+          <input type="text" id="selected-display" value="Kliknij element powyżej" readonly />
         </div>
 
         <div class="control-group">
-          <label for="action-select">Wybierz nowy klawisz / akcję:</label>
+          <label for="action-select">Przypisz akcję (KeyCode):</label>
           <select id="action-select">
-            <optgroup label="Litery i Cyfry">
-              <option value="0x04">A</option><option value="0x05">B</option><option value="0x06">C</option>
-              <option value="0x07">D</option><option value="0x08">E</option><option value="0x09">F</option>
-              <option value="0x0A">G</option><option value="0x0B">H</option><option value="0x0C">I</option>
-              <option value="0x0D">J</option><option value="0x0E">K</option><option value="0x0F">L</option>
-              <option value="0x10">M</option><option value="0x11">N</option><option value="0x12">O</option>
-              <option value="0x13">P</option><option value="0x14">Q</option><option value="0x15">R</option>
-              <option value="0x16">S</option><option value="0x17">T</option><option value="0x18">U</option>
-              <option value="0x19">V</option><option value="0x1A">W</option><option value="0x1B">X</option>
-              <option value="0x1C">Y</option><option value="0x1D">Z</option>
-              <option value="0x1E">1</option><option value="0x1F">2</option><option value="0x20">3</option>
-              <option value="0x21">4</option><option value="0x22">5</option><option value="0x23">6</option>
-              <option value="0x24">7</option><option value="0x25">8</option><option value="0x26">9</option>
-              <option value="0x27">0</option>
-            </optgroup>
-            <optgroup label="Modyfikatory & Specjalne">
-              <option value="0x2C">Space (Spacja)</option>
-              <option value="0x28">Enter</option>
-              <option value="0x29">Escape</option>
-              <option value="0x2A">Backspace</option>
-              <option value="0x2B">Tab</option>
-              <option value="0xE0">Left Ctrl</option>
-              <option value="0xE1">Left Shift</option>
-              <option value="0xE2">Left Alt</option>
-              <option value="0xE3">Left GUI (Win/Cmd)</option>
-            </optgroup>
+            <option value="0x04">Litera A</option>
+            <option value="0x05">Litera B</option>
+            <option value="0x2C">Spacja</option>
+            <option value="0x28">Enter</option>
+            <option value="0x01">Przycisk LPM</option>
+            <option value="0x02">Przycisk PPM</option>
           </select>
         </div>
 
-        <button id="save-btn">Zapisz do pamięci klawiatury (VIA Protocol)</button>
+        <button id="save-btn">Zapisz ustawienia</button>
       </section>
 
       <section id="log-card" class="card">
-        <h2>Konsola VIA (Debug Log)</h2>
+        <h2>Konsola (Debug Log)</h2>
         <pre id="log-output">Czekam na połączenie...</pre>
       </section>
     </main>
