@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebHID Keymapper & Macro Configurator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>WebHID Configurator</h1>
+      <button id="connect-btn">Połącz z urządzeniem</button>
+    </header>
+
+    <main>
+      <section id="status-card" class="card">
+        <h2>Stan urządzenia</h2>
+        <p id="device-name">Brak połączonego urządzenia</p>
+      </section>
+
+      <section id="mapper-card" class="card hidden">
+        <h2>Mapowanie Przycisków</h2>
+        
+        <div class="control-group">
+          <label for="button-select">Wybierz przycisk:</label>
+          <select id="button-select">
+            <option value="1">Przycisk 1 (Mysz / Klawisz)</option>
+            <option value="2">Przycisk 2 (Mysz / Klawisz)</option>
+            <option value="3">Przycisk 3 (Mysz / Klawisz)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="action-select">Przypisz akcję (KeyCode):</label>
+          <select id="action-select">
+            <option value="0x04">Litera 'A'</option>
+            <option value="0x05">Litera 'B'</option>
+            <option value="0x06">Litera 'C'</option>
+            <option value="0x2C">Spacja (Space)</option>
+            <option value="0x28">Enter</option>
+          </select>
+        </div>
+
+        <button id="save-btn">Zapisz konfigurację do urządzenia</button>
+      </section>
+
+      <section id="log-card" class="card">
+        <h2>Konsola odebranych pakietów (Inbound HID)</h2>
+        <pre id="log-output">Czekam na połączenie...</pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
