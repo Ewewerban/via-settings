@@ -7,7 +7,7 @@ body {
 }
 
 .app-container {
-  max-width: 800px;
+  max-width: 1050px;
   margin: 0 auto;
 }
 
@@ -66,12 +66,13 @@ button:hover {
   gap: 5px;
 }
 
-select {
-  padding: 8px;
+select, input {
+  padding: 10px;
   background-color: #2a2a2a;
   color: #fff;
   border: 1px solid #444;
   border-radius: 4px;
+  font-size: 1rem;
 }
 
 pre {
@@ -90,38 +91,54 @@ pre {
   margin-bottom: 15px;
 }
 
-/* Dynamiczny kontener wizualizacji */
-.device-visual {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-.device-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  max-width: 500px;
-  padding: 15px;
+/* Wirtualna Klawiatura */
+.keyboard-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 6px;
   background-color: #161616;
-  border: 2px solid #007acc;
+  padding: 20px;
   border-radius: 12px;
-  justify-content: center;
+  border: 2px solid #333;
+  overflow-x: auto;
 }
 
-.dynamic-btn {
-  min-width: 60px;
-  height: 50px;
-  background-color: #2a2a2a;
-  border: 2px solid #444;
+.key {
+  background-color: #2d2d2d;
+  border: 1px solid #444;
   border-radius: 6px;
   color: #fff;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
+  font-size: 0.85em;
   cursor: pointer;
+  user-select: none;
+  box-shadow: 0 3px 0 #111;
+  transition: all 0.1s ease;
 }
 
-.dynamic-btn.active {
-  border-color: #00ff66;
-  background-color: #005999;
-  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+.key:hover {
+  background-color: #3a3a3a;
+  border-color: #007acc;
 }
+
+.key.active {
+  background-color: #007acc;
+  border-color: #00ff66;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+  transform: translateY(2px);
+}
+
+/* Szerokości klawiszy w siatce CSS Grid */
+.w-1 { grid-column: span 1; }
+.w-125 { grid-column: span 2; }
+.w-15 { grid-column: span 2; }
+.w-175 { grid-column: span 2; }
+.w-2 { grid-column: span 3; }
+.w-225 { grid-column: span 3; }
+.w-275 { grid-column: span 4; }
+.w-625 { grid-column: span 9; }
