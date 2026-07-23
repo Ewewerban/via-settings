@@ -10,7 +10,10 @@
   <div class="app-container">
     <header>
       <h1>WebHID Configurator</h1>
-      <button id="connect-btn">Połącz z urządzeniem</button>
+      <div class="header-buttons">
+        <button id="connect-btn">Połącz z urządzeniem</button>
+        <button id="disconnect-btn" class="btn-danger hidden">Rozłącz</button>
+      </div>
     </header>
 
     <main>
@@ -19,15 +22,34 @@
         <p id="device-name">Brak połączonego urządzenia</p>
       </section>
 
+      <section id="preview-card" class="card hidden">
+        <h2>Wizualny Podgląd Urządzenia</h2>
+        <p class="hint">Kliknij przycisk na schemacie, aby go edytować:</p>
+        
+        <div class="device-visual">
+          <div class="mouse-body">
+            <button class="mouse-btn active" data-button-id="1" id="btn-visual-1">
+              Przycisk 1<br><small>(LPM)</small>
+            </button>
+            <button class="mouse-btn" data-button-id="2" id="btn-visual-2">
+              Przycisk 2<br><small>(PPM)</small>
+            </button>
+            <button class="mouse-btn scroll-btn" data-button-id="3" id="btn-visual-3">
+              Przycisk 3<br><small>(ŚDM)</small>
+            </button>
+          </div>
+        </div>
+      </section>
+
       <section id="mapper-card" class="card hidden">
         <h2>Mapowanie Przycisków</h2>
         
         <div class="control-group">
-          <label for="button-select">Wybierz przycisk:</label>
+          <label for="button-select">Wybrany przycisk:</label>
           <select id="button-select">
-            <option value="1">Przycisk 1 (Mysz / Klawisz)</option>
-            <option value="2">Przycisk 2 (Mysz / Klawisz)</option>
-            <option value="3">Przycisk 3 (Mysz / Klawisz)</option>
+            <option value="1">Przycisk 1 (Lewy)</option>
+            <option value="2">Przycisk 2 (Prawy)</option>
+            <option value="3">Przycisk 3 (Środkowy/Rolkę)</option>
           </select>
         </div>
 
