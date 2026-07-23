@@ -23,21 +23,12 @@
       </section>
 
       <section id="preview-card" class="card hidden">
-        <h2>Wizualny Podgląd Urządzenia</h2>
-        <p class="hint">Kliknij przycisk na schemacie, aby go edytować:</p>
+        <h2>Układ zczytany z urządzenia</h2>
+        <p class="hint">Kliknij przycisk poniżej, aby go wybrać do remapowania:</p>
         
         <div class="device-visual">
-          <div class="mouse-body">
-            <button class="mouse-btn active" data-button-id="1" id="btn-visual-1">
-              Przycisk 1<br><small>(LPM)</small>
-            </button>
-            <button class="mouse-btn" data-button-id="2" id="btn-visual-2">
-              Przycisk 2<br><small>(PPM)</small>
-            </button>
-            <button class="mouse-btn scroll-btn" data-button-id="3" id="btn-visual-3">
-              Przycisk 3<br><small>(ŚDM)</small>
-            </button>
-          </div>
+          <div id="device-container" class="device-container">
+            </div>
         </div>
       </section>
 
@@ -47,10 +38,7 @@
         <div class="control-group">
           <label for="button-select">Wybrany przycisk:</label>
           <select id="button-select">
-            <option value="1">Przycisk 1 (Lewy)</option>
-            <option value="2">Przycisk 2 (Prawy)</option>
-            <option value="3">Przycisk 3 (Środkowy/Rolkę)</option>
-          </select>
+            </select>
         </div>
 
         <div class="control-group">
@@ -61,6 +49,9 @@
             <option value="0x06">Litera 'C'</option>
             <option value="0x2C">Spacja (Space)</option>
             <option value="0x28">Enter</option>
+            <option value="0x01">Lewy Przycisk Myszy</option>
+            <option value="0x02">Prawy Przycisk Myszy</option>
+            <option value="0x03">Środkowy Przycisk Myszy</option>
           </select>
         </div>
 
