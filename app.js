@@ -1,31 +1,26 @@
 let activeDevice = null;
 
 const connectBtn = document.getElementById('connect-btn');
+const disconnectBtn = document.getElementById('disconnect-btn');
 const saveBtn = document.getElementById('save-btn');
 const deviceNameEl = document.getElementById('device-name');
 const mapperCard = document.getElementById('mapper-card');
+const previewCard = document.getElementById('preview-card');
 const logOutput = document.getElementById('log-output');
 
-// Pomocnicza funkcja logująca
+const buttonSelect = document.getElementById('button-select');
+const visualButtons = document.querySelectorAll('.mouse-btn');
+
 function log(message) {
   const timestamp = new Date().toLocaleTimeString();
   logOutput.textContent += `\n[${timestamp}] ${message}`;
   logOutput.scrollTop = logOutput.scrollHeight;
 }
 
-// Sprawdzenie obsługi WebHID
-if (!('hid' in navigator)) {
-  alert('Twoja przeglądarka nie obsługuje WebHID API! Użyj Chrome, Edge lub Opera.');
-} else {
-  log('WebHID API jest wspierane. Gotowe do połączenia.');
-}
-
 // 1. Łączenie z urządzeniem
 connectBtn.addEventListener('click', async () => {
   try {
     log('Otwieranie okna wyboru urządzenia...');
-    
-    // Zapytanie o urządzenia HID
     const devices = await navigator.hid.requestDevice({ filters: [] });
 
     if (!devices || devices.length === 0) {
@@ -35,16 +30,20 @@ connectBtn.addEventListener('click', async () => {
 
     activeDevice = devices[0];
 
-    // Otwarcie połączenia
     if (!activeDevice.opened) {
       await activeDevice.open();
     }
 
     deviceNameEl.textContent = `Połączono: ${activeDevice.productName || 'Nieznane urządzenie'} (Vendor ID: ${activeDevice.vendorId})`;
+    
+    // Pokaż sekcje po połączeniu
     mapperCard.classList.remove('hidden');
+    previewCard.classList.remove('hidden');
+    connectBtn.classList.add('hidden');
+    disconnectBtn.classList.remove('hidden');
+
     log(`Połączono pomyślnie z: ${activeDevice.productName}`);
 
-    // Nasłuchiwanie wejściowych danych
     activeDevice.addEventListener('inputreport', handleInputReport);
 
   } catch (error) {
@@ -53,21 +52,65 @@ connectBtn.addEventListener('click', async () => {
   }
 });
 
-// 2. Obsługa przychodzących danych HID
+// 2. Rozłączanie urządzenia
+disconnectBtn.addEventListener('click', async () => {
+  if (activeDevice) {
+    try {
+      await activeDevice.close();
+      log(`Rozłączono z: ${activeDevice.productName}`);
+    } catch (error) {
+      log(`Błąd podczas rozłączania: ${error.message}`);
+    }
+  }
+
+  activeDevice = null;
+  deviceNameEl.textContent = 'Brak połączonego urządzenia';
+  
+  // Ukryj sekcje
+  mapperCard.classList.add('hidden');
+  previewCard.classList.add('hidden');
+  disconnectBtn.classList.add('hidden');
+  connectBtn.classList.remove('hidden');
+});
+
+// 3. Synchronizacja wyboru przycisku (Wizualny schemat <-> Rozwijana lista)
+visualButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-button-id');
+    buttonSelect.value = id;
+    highlightVisualButton(id);
+  });
+});
+
+buttonSelect.addEventListener('change', (e) => {
+  highlightVisualButton(e.target.value);
+});
+
+function highlightVisualButton(id) {
+  visualButtons.forEach(btn => {
+    if (btn.getAttribute('data-button-id') === id) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+// 4. Odbiór danych HID
 function handleInputReport(event) {
   const { data, reportId } = event;
   const valueArray = new Uint8Array(data.buffer);
   log(`Odebrano pakiet [Report ID: ${reportId}]: ${Array.from(valueArray).join(', ')}`);
 }
 
-// 3. Wysyłanie konfiguracji
+// 5. Zapisywanie konfiguracji
 saveBtn.addEventListener('click', async () => {
   if (!activeDevice) {
     log('Brak aktywnego urządzenia!');
     return;
   }
 
-  const buttonId = parseInt(document.getElementById('button-select').value);
+  const buttonId = parseInt(buttonSelect.value);
   const keyCode = parseInt(document.getElementById('action-select').value);
 
   const reportData = new Uint8Array([0x01, buttonId, keyCode]);
